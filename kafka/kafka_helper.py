@@ -71,10 +71,13 @@ class KafkaHelper(object):
             boot_server = self.boot_server
         consumer = KafkaConsumer(topic, bootstrap_servers=boot_server)
         
+        msgs = []
         cur_count = 0
         for msg in consumer:
             cur_count += 1
             print(msg.partition, msg.offset, msg.key, msg.value)
+            msgs.append(msg.value)
             if limit and cur_count >= limit:
                 logger.info("{} messages consumed!".format(cur_count))
                 break
+        return msgs

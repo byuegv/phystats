@@ -35,10 +35,6 @@ def unified_msg_format(key, name, ip, value):
     millisecond = get_millisecond()
     return "{}:{}:{}:{}:{}".format(key, name, ip, millisecond, value)
 
-def trans_format(label, name, ipl, t, v):
-    return label + ":" + name + ":" + ipl + ":" + t + ":" + v
-
-
 def k8s_cluster_info():
     """
     获取k8s集群信息

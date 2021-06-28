@@ -32,12 +32,13 @@ class KafkaHelper(object):
         if not topic:
             topic = self.topic
         try:
+            logger.info("Start send data to server={}, topic={}".format(self.boot_server, topic))
             start_time = time.time()
             future = self.producer.send(topic, value=msg)
             cost_time = time.time() - start_time
             logger.info("Send one msg cost: {} s".format(cost_time))
         except Exception as e:
-            logger.warn("Send msg={} to kafka failed!".format(msg))
+            logger.error("Send msg={} to kafka failed!".format(msg))
         finally:
             self.producer.flush(timeout=30)
     
@@ -50,11 +51,14 @@ class KafkaHelper(object):
         if not topic:
             topic = self.topic
         try:
+            logger.info("Start send data to server={}, topic={}".format(self.boot_server, topic))
             start_time = time.time()
             for msg in msg_list:
                 future = self.producer.send(topic, value=msg)
             cost_time = time.time() - start_time
             logger.info("Send {} messages cost: {} s".format(len(msg_list), cost_time))
+        except Exception as e:
+            logger.error("Send msgs_list to kafka failed!")
         finally:
             self.producer.flush(timeout=30)
 
@@ -71,6 +75,7 @@ class KafkaHelper(object):
             boot_server = self.boot_server
         consumer = KafkaConsumer(topic, bootstrap_servers=boot_server)
         
+        logger.info("Start consume data from server={}, topic={}".format(boot_server, topic))
         msgs = []
         cur_count = 0
         for msg in consumer:

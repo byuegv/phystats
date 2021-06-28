@@ -3,11 +3,13 @@
 from phystats.logger import logger
 from phystats.collector.collect import collect_metrics
 from phystats.repeat_timer import RepeatTimer
-from phystats.kafka.kafka_helper import KafkaHelper
+from phystats.kafkah.kafka_helper import KafkaHelper
 
 def get_metrics():
-    msgs = collect_metrics()
+    msgs = collect_metrics(host='localhost', port=9090)
     print(len(msgs))
+    for msg in msgs:
+        print(msg)
 
     kafka_helper = KafkaHelper(topic="phystats", host='localhost', port=9092)
     kafka_helper.send_msg_list(msgs, topic=None)

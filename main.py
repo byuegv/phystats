@@ -10,5 +10,6 @@ def get_metrics():
 
 if __name__ == '__main__':
     logger.info("Main thread start!")
-    collect_timer = RepeatTimer(5.0, get_metrics)
+    get_metrics()
+    # collect_timer = RepeatTimer(5.0, get_metrics)
 

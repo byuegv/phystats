@@ -36,12 +36,12 @@ def query_prometheus_data(pql, host='localhost', port=9090, params=None, data=No
     @params:
     @data:
     """
-    url_ip = "http://{}:{}/api/v1/query?query={}".format(host, port, pql)
+    url = "http://{}:{}/api/v1/query?query={}".format(host, port, pql)
     try:
         logger.info("Request: {}".format(url))
         response = requests.get(url)
-        logger.info("Response: {}".format(response))
         result = response.json()
+        logger.info("Response: {}; Result: {}".format(response, result))
         return result
     except Exception as e:
         logger.error("Get metrics failed from prometheus! Exception: {}".format(e))

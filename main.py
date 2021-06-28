@@ -12,9 +12,14 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--host', default="localhost", type=str, help="prometheus host")
 parser.add_argument('--port', default="9090", type=str, help="prometheus port")
-parser.add_argument('--kafka-host', default="localhost", type=str, help="kafka host")
-parser.add_argument('--kafka-port', default="9092", type=str, help="kafka port")
-parser.add_argument('--kafka-topic', default="phystats", type=str, help="kafka topic")
+parser.add_argument('--kafka_host', default="localhost", type=str, help="kafka host")
+parser.add_argument('--kafka_port', default="9092", type=str, help="kafka port")
+parser.add_argument('--kafka_topic', default="phystats", type=str, help="kafka topic")
+parser.add_argument('--collect_interval', default=5.0, type=float, help="metric collect interval")
+parser.add_argument('--consume_interval', default=5.0, type=float, help="kafka interval")
+parser.add_argument('--k8s_interval', default=15.0, type=float, help="k8s cluster info collect interval")
+
+
 
 parser.add_argument('--role', default="collector", type=str, choices=["collector","consumer" "k8s_info"],
                     help="The role of current: collector to get prometheus metrics" +
@@ -55,12 +60,12 @@ if __name__ == '__main__':
     # get_metrics()
 
     if args.role == "collector":
-        collect_timer = RepeatTimer(5.0, get_metrics)
+        collect_timer = RepeatTimer(args.collect_interval, get_metrics)
         collect_timer.start()
     elif args.role == "consumer":
-        consume_timer = RepeatTimer(5.0, consume_msgs)
+        consume_timer = RepeatTimer(args.consume_interval, consume_msgs)
         consume_timer.start()
     elif args.role == "k8s_info":
-        k8s_timer = RepeatTimer(15.0, get_k8s_cluster_info)
+        k8s_timer = RepeatTimer(args.k8s_interval, get_k8s_cluster_info)
         k8s_timer.start()
 

@@ -21,7 +21,7 @@ parser.add_argument('--k8s_interval', default=15.0, type=float, help="k8s cluste
 
 
 
-parser.add_argument('--role', default="collector", type=str, choices=["collector","consumer" "k8s_info"],
+parser.add_argument('--role', default="collector", type=str, choices=["collector","consumer", "k8s_info"],
                     help="The role of current: collector to get prometheus metrics" +
                          " k8s_info to get k8s_cluster_info" +
                          " consumer to consume msgs from kafka")
@@ -41,7 +41,7 @@ def get_k8s_cluster_info():
     kafka_helper.send_msg_list(msgs, topic=None)
 
 def get_metrics():
-    msgs = collect_metrics(host=host=args.host, port=args.port)
+    msgs = collect_metrics(host=args.host, port=args.port)
     print(len(msgs))
     for msg in msgs:
         print(msg)
@@ -58,6 +58,10 @@ if __name__ == '__main__':
     logger.info("Main thread start!")
     # get_k8s_cluster_info()
     # get_metrics()
+    #print(args.host, args.port, args.kafka_host, args.kafka_port, args.kafka_topic,
+    #        args.collect_interval, args.consume_interval, args.k8s_interval, args.role)
+    # import sys
+    #sys.exit(0)
 
     if args.role == "collector":
         collect_timer = RepeatTimer(args.collect_interval, get_metrics)

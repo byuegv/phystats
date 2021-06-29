@@ -18,6 +18,7 @@ parser.add_argument('--kafka_topic', default="phystats", type=str, help="kafka t
 parser.add_argument('--collect_interval', default=5.0, type=float, help="metric collect interval")
 parser.add_argument('--consume_interval', default=5.0, type=float, help="kafka interval")
 parser.add_argument('--k8s_interval', default=15.0, type=float, help="k8s cluster info collect interval")
+parser.add_argument('--limit', default=100000, type=int, help="msgs to consume at once")
 
 
 
@@ -50,7 +51,10 @@ def get_metrics():
 
 def consume_msgs():
     kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
-    msgs = kafka_helper.consume_data(topic=None, boot_server=None, limit=None)
+    limit = None
+    if args.limit:
+        limit = args.limit
+    msgs = kafka_helper.consume_data(topic=None, boot_server=None, limit=limit)
     logger.info("Number of consumed messages: {}".format(len(msgs)))
 
 
@@ -67,8 +71,7 @@ if __name__ == '__main__':
         collect_timer = RepeatTimer(args.collect_interval, get_metrics)
         collect_timer.start()
     elif args.role == "consumer":
-        consume_timer = RepeatTimer(args.consume_interval, consume_msgs)
-        consume_timer.start()
+        consume_msgs()
     elif args.role == "k8s_info":
         k8s_timer = RepeatTimer(args.k8s_interval, get_k8s_cluster_info)
         k8s_timer.start()

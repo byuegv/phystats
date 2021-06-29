@@ -1,0 +1,24 @@
+global:
+  # 设置抓取数据的时间间隔，间隔设置为每15秒一次。默认为每1分钟。
+  scrape_interval: 15s
+  # 设定抓取数据的超时时间，默认为10s
+  scrape_timeout: 10s
+  # 设置规则刷新，每15秒刷新一次规则。默认值为每1分钟。
+  evaluation_interval: 15s
+
+# 普罗米修斯与抓取模块交互的接口配置
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+        - localhost:9090
+
+  - job_name: cadvisor
+    static_configs:
+      - targets:
+        - localhost:8081
+
+  - job_name: node_exporter
+    static_configs:
+      - targets:
+        - localhost:9100

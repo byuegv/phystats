@@ -67,7 +67,7 @@ scrape_configs:
 ```
 
 
-`docker-compose.yaml`:
+`docker-compose.yml`:
 ```Yaml
 version: '3.2'
 services:
@@ -141,3 +141,36 @@ volumes:
 ```
 
 ## Run
+### Start service
+1. prometheus related
+```Bash
+docker-compose -f phystats/dockers/docker-compose.yml up -d
+```
+
+2. start zookeeper and kafka
+```Bash
+bin/zookeeper-server-start.sh -daemon config/zookeeper.properties
+bin/kafka-server-start.sh  -daemon config/server.properties
+bin/kafka-topics.sh --create --topic phystats --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
+```
+
+### Collect data
+1. Collect metrics
+``` Bash
+python3 main.py --role="collector" --host="localhost" --port="9090" --kafka_host="localhost" --kafka_port="9092" --kafka_topic="phystats" --collect_interval=5.0
+```
+
+1. k8s_info
+``` Bash
+python3 main.py --role="k8s_info" --host="localhost" --port="9090" --kafka_host="localhost" --kafka_port="9092" --kafka_topic="phystats" --k8s_interval=5.0
+```
+
+3. consumer
+``` Bash
+python3 main.py --role="consumer" --kafka_host="localhost" --kafka_port="9092" --kafka_topic="phystats" --limit=10000
+```
+
+4. kafka2kafka
+``` Bash
+python3 kafka2kafka --from_host="localhost" --from_port="9092" --from_topic="phystats" --to_host="localhost" --to_port="9092" --to_topic="phystats"
+```

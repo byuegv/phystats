@@ -80,8 +80,9 @@ class KafkaHelper(object):
         cur_count = 0
         for msg in consumer:
             cur_count += 1
-            logger.debug("{} {} {}".format(msg.topic, msg.offset, str(msg.value, encoding="utf-8")))
-            msgs.append(str(msg.value, encoding="utf-8"))
+            _msg_value = str(msg.value, encoding="utf8").replace('"', '')
+            logger.debug("{} {} {}".format(msg.topic, msg.offset, _msg_value))
+            msgs.append(_msg_value)
             if limit and cur_count >= limit:
                 logger.info("{} messages consumed!".format(cur_count))
                 break

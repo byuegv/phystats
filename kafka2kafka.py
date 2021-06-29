@@ -21,7 +21,7 @@ args = parser.parse_args()
 
 
 def kafka_to_kafka(from_server, from_topic, to_server, to_topic):
-    consumer = KafkaConsumer(rom_topic, bootstrap_servers=from_server)
+    consumer = KafkaConsumer(from_topic, bootstrap_servers=from_server)
     
     producer = producer = KafkaProducer(bootstrap_servers=[to_server], 
                                         key_serializer=lambda k: json.dumps(k).encode('utf8'),
@@ -31,7 +31,7 @@ def kafka_to_kafka(from_server, from_topic, to_server, to_topic):
     cur_count = 0
     for msg in consumer:
         cur_count += 1
-        _msg_value = str(msg.value, encoding="utf-8")
+        _msg_value = str(msg.value, encoding="utf8").replace('"', '')
         logger.debug("{} {} {}".format(msg.topic, msg.offset, _msg_value))
         try:
             logger.debug("Start send data to server={}, topic={}".format(to_server, to_topic))

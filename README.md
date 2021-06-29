@@ -1,5 +1,6 @@
 # phystats
 ## Introduction
+![arch](images/arch.png)
 
 ## Install
 ### Runtime Environment

@@ -30,7 +30,7 @@ args = parser.parse_args()
 
 
 
-kafka_helper = KafkaHelper(topic=args.topic, host=args.kafka_host, port=args.kafka_port)
+kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
 
 def get_k8s_cluster_info():
     msgs = k8s_cluster_info()
@@ -49,7 +49,7 @@ def get_metrics():
     kafka_helper.send_msg_list(msgs, topic=None)
 
 def consume_msgs():
-    kafka_helper = KafkaHelper(topic=args.topic, host=args.kafka_host, port=args.kafka_port)
+    kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
     msgs = kafka_helper.consume_data(topic=None, boot_server=None, limit=None)
     logger.info("Number of consumed messages: {}".format(len(msgs)))
 
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     # get_k8s_cluster_info()
     # get_metrics()
     for k in list(vars(args).keys()):
-        logger.info('{}: {}'.format((k, vars(args)[k])))
+        logger.info('{}: {}'.format(k, vars(args)[k]))
     # import sys
     # sys.exit(0)
 

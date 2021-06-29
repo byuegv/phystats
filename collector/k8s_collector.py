@@ -60,8 +60,8 @@ def k8s_cluster_info():
         request_es = 0
 
         ip = None
-        if i.status.host_ip:
-            ip = i.status.host_ip
+        if item.status.host_ip:
+            ip = item.status.host_ip
         else:
             ip = local_ip_address()
 

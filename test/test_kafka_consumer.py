@@ -2,7 +2,7 @@
 
 import unittest
 from phystats.repeat_timer import RepeatTimer
-from phystats.hkafka.kafka_helper import KafkaHelper
+from phystats.kafkah.kafka_helper import KafkaHelper
 
 
 class TestKafkaConsume(unittest.TestCase):

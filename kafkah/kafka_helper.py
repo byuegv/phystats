@@ -17,8 +17,8 @@ class KafkaHelper(object):
         self.topic = topic
 
         self.producer = producer = KafkaProducer(bootstrap_servers=[self.boot_server], 
-                                                 key_serializer=lambda k: json.dumps(k).encode(),
-                                                 value_serializer=lambda v: json.dumps(v).encode())
+                                                 key_serializer=lambda k: json.dumps(k).encode('utf8'),
+                                                 value_serializer=lambda v: json.dumps(v).encode('utf8'))
     
     def set_topic(self, topic):
         self.topic = topic
@@ -80,7 +80,7 @@ class KafkaHelper(object):
         cur_count = 0
         for msg in consumer:
             cur_count += 1
-            print(msg.partition, msg.offset, msg.key, msg.value)
+            logger.debug(msg.partition, msg.offset, msg.key, msg.value)
             msgs.append(msg.value)
             if limit and cur_count >= limit:
                 logger.info("{} messages consumed!".format(cur_count))

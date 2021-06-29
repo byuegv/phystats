@@ -106,17 +106,36 @@ def collect_metrics(host='localhost', port=9090):
     msgs = []
     start_time = time.time()
 
-    container_msgs = collect_container(host, port)
-    dif_format_msgs = collect_dif_format(host, port)
-    pdu_msgs = collect_pdu(host, port)
-    pod_msgs = collect_pod(host, port)
-    vm_msgs = collect_vm(host, port)
+    try:
+        container_msgs = collect_container(host, port)
+        msgs.extend(container_msgs)
+    except Exception as e:
+        logger.info("Encounter exception when collecting metrics, Exception: {}".format(e))
 
-    msgs.extend(container_msgs)
-    msgs.extend(dif_format_msgs)
-    msgs.extend(pdu_msgs)
-    msgs.extend(pod_msgs)
-    msgs.extend(vm_msgs)
+    
+    try:
+        dif_format_msgs = collect_dif_format(host, port)
+        msgs.extend(dif_format_msgs)
+    except Exception as e:
+        logger.info("Encounter exception when collecting metrics, Exception: {}".format(e))
+
+    try:
+        pdu_msgs = collect_pdu(host, port)
+        msgs.extend(pdu_msgs)
+    except Exception as e:
+        logger.info("Encounter exception when collecting metrics, Exception: {}".format(e))
+    
+    try:
+        pod_msgs = collect_pod(host, port)
+        msgs.extend(pod_msgs)
+    except Exception as e:
+        logger.info("Encounter exception when collecting metrics, Exception: {}".format(e))
+
+    try:
+        vm_msgs = collect_vm(host, port)
+        msgs.extend(vm_msgs)
+    except Exception as e:
+        logger.info("Encounter exception when collecting metrics, Exception: {}".format(e))
 
     cost_time = time.time() - start_time
     logger.info("Collect all metrics cost: {} s".format(cost_time))

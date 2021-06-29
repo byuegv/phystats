@@ -34,34 +34,34 @@ kafka_helper = KafkaHelper(topic=args.topic, host=args.kafka_host, port=args.kaf
 
 def get_k8s_cluster_info():
     msgs = k8s_cluster_info()
-    print(len(msgs))
+    logger.info("Number of k8s cluster information messages: {}".format(len(msgs)))
     for msg in msgs:
-        print(msg)
+        logger.debug("k8s_info: {}".format(msg))
     
     kafka_helper.send_msg_list(msgs, topic=None)
 
 def get_metrics():
     msgs = collect_metrics(host=args.host, port=args.port)
-    print(len(msgs))
+    logger.info("Number of metrics messages: {}".format(len(msgs)))
     for msg in msgs:
-        print(msg)
+        logger.debug("metrics: {}".format(msg))
 
     kafka_helper.send_msg_list(msgs, topic=None)
 
 def consume_msgs():
     kafka_helper = KafkaHelper(topic=args.topic, host=args.kafka_host, port=args.kafka_port)
     msgs = kafka_helper.consume_data(topic=None, boot_server=None, limit=None)
-    print(len(msgs))
+    logger.info("Number of consumed messages: {}".format(len(msgs)))
 
 
 if __name__ == '__main__':
     logger.info("Main thread start!")
     # get_k8s_cluster_info()
     # get_metrics()
-    #print(args.host, args.port, args.kafka_host, args.kafka_port, args.kafka_topic,
-    #        args.collect_interval, args.consume_interval, args.k8s_interval, args.role)
+    for k in list(vars(args).keys()):
+        logger.info('{}: {}'.format((k, vars(args)[k])))
     # import sys
-    #sys.exit(0)
+    # sys.exit(0)
 
     if args.role == "collector":
         collect_timer = RepeatTimer(args.collect_interval, get_metrics)

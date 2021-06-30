@@ -6,6 +6,8 @@ import time
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import kafka_errors
 from phystats.logger import logger
+from phystats.daemonize import daemonizef
+
 
 
 parser = argparse.ArgumentParser()
@@ -16,6 +18,9 @@ parser.add_argument('--from_topic', default="phystats", type=str, help="topic of
 parser.add_argument('--to_host', default="localhost", type=str, help="host of to kafka")
 parser.add_argument('--to_port', default="9092", type=str, help="port of to kafka")
 parser.add_argument('--to_topic', default="phystats", type=str, help="topic of to kafka")
+parser.add_argument('--daemon', action='store_true', help="daemon mod")
+parser.add_argument('--daemon_action', default='start', type=str, choices=['start', 'stop'],
+                    help="start/stop daemon process")
 
 args = parser.parse_args()
 
@@ -52,6 +57,30 @@ if __name__ == '__main__':
     to_server = "{}:{}".format(args.to_host, args.to_port)
     to_topic = args.to_topic
 
-    kafka_to_kafka(from_server, from_topic, to_server, to_topic)
+    PIDFILE = '/tmp/phystats_k2k_daemon.pid'
+    if args.daemon:
+        if args.daemon_action == 'start':
+            try:
+                daemonizef(PIDFILE,
+                        stdout='/tmp/phystats_k2k_daemon.log',
+                        stderr='/tmp/phystats_k2k_dameon.log')
+            except RuntimeError as e:
+                print(e, file=sys.stderr)
+                raise SystemExit(1)
+            # 守护进程中运行的主程序
+            kafka_to_kafka(from_server, from_topic, to_server, to_topic)
+
+        elif args.daemon_action == 'stop':
+            if os.path.exists(PIDFILE):
+                with open(PIDFILE) as f:
+                    os.kill(int(f.read()), signal.SIGTERM)
+            else:
+                print('Not running', file=sys.stderr)
+                raise SystemExit(1)
+        else:
+            print('Unknown command {!r}'.format(sys.argv[1]), file=sys.stderr)
+            raise SystemExit(1)
+    else:
+        kafka_to_kafka(from_server, from_topic, to_server, to_topic)
 
 

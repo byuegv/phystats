@@ -1,11 +1,13 @@
 # -*- coding:utf-8 -*-
 
+import sys
 import argparse
 from phystats.logger import logger
 from phystats.collector.collect import collect_metrics
 from phystats.collector.k8s_collector import k8s_cluster_info
 from phystats.repeat_timer import RepeatTimer
 from phystats.kafkah.kafka_helper import KafkaHelper
+from phystats.daemonize import daemonizef
 
 
 parser = argparse.ArgumentParser()
@@ -19,13 +21,14 @@ parser.add_argument('--collect_interval', default=5.0, type=float, help="metric 
 parser.add_argument('--consume_interval', default=5.0, type=float, help="kafka interval")
 parser.add_argument('--k8s_interval', default=15.0, type=float, help="k8s cluster info collect interval")
 parser.add_argument('--limit', default=100000, type=int, help="msgs to consume at once")
-
-
-
 parser.add_argument('--role', default=["collector"], type=str, nargs='+', choices=["collector","consumer", "k8s_info"],
                     help="The role of current: collector to get prometheus metrics" +
                          " k8s_info to get k8s_cluster_info" +
                          " consumer to consume msgs from kafka")
+parser.add_argument('--daemon', action='store_true', help="daemon mod")
+parser.add_argument('--daemon_action', default='start', type=str, choices=['start', 'stop'],
+                    help="start/stop daemon process")
+
 
 args = parser.parse_args()
 
@@ -66,19 +69,52 @@ if __name__ == '__main__':
         logger.info('{}: {}'.format(k, vars(args)[k]))
     # import sys
     # sys.exit(0)
+    PIDFILE = '/tmp/phystats_daemon.pid'
 
-    timers = []
-    if "collector" in args.role:
-        collect_timer = RepeatTimer(args.collect_interval, get_metrics)
-        timers.append(collect_timer)
+    if args.daemon:
+        if args.daemon_action == 'start':
+            try:
+                daemonizef(PIDFILE,
+                        stdout='/tmp/phystats_daemon.log',
+                        stderr='/tmp/phystats_dameon.log')
+            except RuntimeError as e:
+                print(e, file=sys.stderr)
+                raise SystemExit(1)
+            # 守护进程中运行的主程序
+            timers = []
+            if "collector" in args.role:
+                collect_timer = RepeatTimer(args.collect_interval, get_metrics)
+                timers.append(collect_timer)
 
-    if "consumer" in args.role:
-        consume_msgs()
+            if "consumer" in args.role:
+                consume_msgs()
 
-    if "k8s_info" in args.role:
-        k8s_timer = RepeatTimer(args.k8s_interval, get_k8s_cluster_info)
-        timers.append(k8s_timer)
+            if "k8s_info" in args.role:
+                k8s_timer = RepeatTimer(args.k8s_interval, get_k8s_cluster_info)
+                timers.append(k8s_timer)
 
-    for t in timers:
-        t.start()
+            for t in timers:
+                t.start()
+        elif args.daemon_action == 'stop':
+            if os.path.exists(PIDFILE):
+                with open(PIDFILE) as f:
+                    os.kill(int(f.read()), signal.SIGTERM)
+            else:
+                print('Not running', file=sys.stderr)
+                raise SystemExit(1)
+        else:
+            print('Unknown command {!r}'.format(sys.argv[1]), file=sys.stderr)
+            raise SystemExit(1)
+    else:
+        timers = []
+        if "collector" in args.role:
+            collect_timer = RepeatTimer(args.collect_interval, get_metrics)
+            timers.append(collect_timer)
+        if "consumer" in args.role:
+            consume_msgs()
+        if "k8s_info" in args.role:
+            k8s_timer = RepeatTimer(args.k8s_interval, get_k8s_cluster_info)
+            timers.append(k8s_timer)
+        for t in timers:
+            t.start()
 

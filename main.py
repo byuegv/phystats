@@ -22,7 +22,7 @@ parser.add_argument('--limit', default=100000, type=int, help="msgs to consume a
 
 
 
-parser.add_argument('--role', default="collector", type=str, choices=["collector","consumer", "k8s_info"],
+parser.add_argument('--role', default=["collector"], type=str, nargs='+', choices=["collector","consumer", "k8s_info"],
                     help="The role of current: collector to get prometheus metrics" +
                          " k8s_info to get k8s_cluster_info" +
                          " consumer to consume msgs from kafka")
@@ -31,7 +31,7 @@ args = parser.parse_args()
 
 
 
-kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
+# kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
 
 def get_k8s_cluster_info():
     msgs = k8s_cluster_info()
@@ -67,12 +67,18 @@ if __name__ == '__main__':
     # import sys
     # sys.exit(0)
 
-    if args.role == "collector":
+    timers = []
+    if "collector" in args.role:
         collect_timer = RepeatTimer(args.collect_interval, get_metrics)
-        collect_timer.start()
-    elif args.role == "consumer":
+        timers.append(collect_timer)
+
+    if "consumer" in args.role:
         consume_msgs()
-    elif args.role == "k8s_info":
+
+    if "k8s_info" in args.role:
         k8s_timer = RepeatTimer(args.k8s_interval, get_k8s_cluster_info)
-        k8s_timer.start()
+        timers.append(k8s_timer)
+
+    for t in timers:
+        t.start()
 

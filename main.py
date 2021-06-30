@@ -31,7 +31,7 @@ args = parser.parse_args()
 
 
 
-# kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
+kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
 
 def get_k8s_cluster_info():
     msgs = k8s_cluster_info()

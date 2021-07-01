@@ -2,6 +2,7 @@
 
 import os
 import sys
+import signal
 import argparse
 from phystats.logger import logger
 from phystats.collector.collect import collect_metrics

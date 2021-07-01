@@ -36,16 +36,17 @@ def kafka_to_kafka(from_server, from_topic, to_server, to_topic):
                                         value_serializer=lambda v: json.dumps(v).encode('utf8'))
         
     logger.info("Start consume data from server={}, topic={}".format(from_server, from_topic))
-    cur_count = 0
-    for msg in consumer:
-        cur_count += 1
-        _msg_value = str(msg.value, encoding="utf8").replace('"', '')
-        logger.debug("{} {} {}".format(msg.topic, msg.offset, _msg_value))
-        try:
-            logger.debug("Start send data to server={}, topic={}".format(to_server, to_topic))
-            future = producer.send(to_topic, value=_msg_value)
-        except Exception as e:
-            logger.error("Send msg={} to kafka {} failed!".format(_msg_value, to_server))
+    while True:
+        cur_count = 0
+        for msg in consumer:
+            cur_count += 1
+            _msg_value = str(msg.value, encoding="utf8").replace('"', '')
+            logger.debug("{} {} {}".format(msg.topic, msg.offset, _msg_value))
+            try:
+                logger.debug("Start send data to server={}, topic={}".format(to_server, to_topic))
+                future = producer.send(to_topic, value=_msg_value)
+            except Exception as e:
+                logger.error("Send msg={} to kafka {} failed!".format(_msg_value, to_server))
 
 
 if __name__ == '__main__':

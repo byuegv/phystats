@@ -35,14 +35,13 @@ args = parser.parse_args()
 
 
 
-kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
-
 def get_k8s_cluster_info():
     msgs = k8s_cluster_info()
     logger.info("Number of k8s cluster information messages: {}".format(len(msgs)))
     for msg in msgs:
         logger.debug("k8s_info: {}".format(msg))
-    
+
+    kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
     kafka_helper.send_msg_list(msgs, topic=None)
 
 def get_metrics():
@@ -50,7 +49,8 @@ def get_metrics():
     logger.info("Number of metrics messages: {}".format(len(msgs)))
     for msg in msgs:
         logger.debug("metrics: {}".format(msg))
-
+        
+    kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
     kafka_helper.send_msg_list(msgs, topic=None)
 
 def consume_msgs():

@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 
+import os
+import sys
 import argparse
 import json
 import time
@@ -63,7 +65,7 @@ if __name__ == '__main__':
             try:
                 daemonizef(PIDFILE,
                         stdout='/tmp/phystats_k2k_daemon.log',
-                        stderr='/tmp/phystats_k2k_dameon.log')
+                        stderr='/tmp/phystats_k2k_daemon.log')
             except RuntimeError as e:
                 print(e, file=sys.stderr)
                 raise SystemExit(1)

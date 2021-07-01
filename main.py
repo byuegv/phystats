@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+import os
 import sys
 import argparse
 from phystats.logger import logger
@@ -76,7 +77,7 @@ if __name__ == '__main__':
             try:
                 daemonizef(PIDFILE,
                         stdout='/tmp/phystats_daemon.log',
-                        stderr='/tmp/phystats_dameon.log')
+                        stderr='/tmp/phystats_daemon.log')
             except RuntimeError as e:
                 print(e, file=sys.stderr)
                 raise SystemExit(1)

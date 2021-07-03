@@ -15,6 +15,7 @@ pip install --upgrade pip
 ```
 kafka==1.3.5
 kafka-python==2.0.2
+websocket-client==0.59.0
 docker==4.1.0
 docker-compose==1.25.0
 redis==3.5.3

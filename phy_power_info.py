@@ -27,7 +27,11 @@ args = parser.parse_args()
 
 
 def get_phy_power_info():
-    msgs = power_info(args.cmd_args)
+    msgs = []
+    try:
+        msgs = power_info(args.cmd_args)
+    except Exception as e:
+        logger.warn("Get pysical power info failed! Exception: {}".format(e))
     logger.info("Number of physical power information messages: {}".format(len(msgs)))
     for msg in msgs:
         logger.debug("phy_power_info: {}".format(msg))

@@ -38,11 +38,15 @@ def power_info(cmd_args):
     msgs = []
     name = 'power'
     for item in filtered_data:
-        key = item[0]
-        value = 'None'
-        if len(item) == 5:
-            value = item[4].split('-')[0].strip()
-        msg = unified_message_format(name,key, value)
-        msgs.append(msg)
+        try:
+            key = item[0]
+            value = '0'
+            if len(item) >= 5 and len(item[4]) > 0:
+                value = item[4].split('-')[0].strip()
+                value = float(value)
+            msg = unified_message_format(name,key, value)
+            msgs.append(msg)
+        except Exception as e:
+            logger.debug("Convert data failed: Exception: {}".format(e))
     return msgs
 

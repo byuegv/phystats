@@ -18,4 +18,4 @@ def unified_message_format(name, key, value):
     ip = local_ip_address()
     millisecond = get_millisecond()
     value = format_float(value)
-    return "{}:{}:{}:{}:{}".format(name.rstrip("\n"), key, ip, millisecond, value)
+    return "{}:{}:{}:{}:{}|{}".format(name.rstrip("\n"), key, ip, millisecond, value, millisecond)

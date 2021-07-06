@@ -33,7 +33,7 @@ def unified_msg_format(key, name, ip, value):
     @value:
     """
     millisecond = get_millisecond()
-    return "{}:{}:{}:{}:{}".format(key, name, ip, millisecond, value)
+    return "{}:{}:{}:{}:{}|{}".format(key, name, ip, millisecond, value, millisecond)
 
 def k8s_cluster_info():
     """

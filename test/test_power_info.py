@@ -8,7 +8,8 @@ class TestPhyPowerInfo(unittest.TestCase):
     
     def test_power_info(self):
         cmd_args = ['sudo', 'ipmitool', 'sdr', 'elist']
-        msgs = power_info(cmd_args)
+        filters = ['P', 'Watte']
+        msgs = power_info(cmd_args, filters)
         print(len(msgs))
         for msg in msgs:
             print(msg)

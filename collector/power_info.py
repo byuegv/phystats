@@ -6,7 +6,7 @@ from phystats.collector.util import unified_message_format
 from phystats.logger import logger
 
 
-def power_info(cmd_args):
+def power_info(cmd_args, filters):
     """
     获取物理机能耗数据
     """
@@ -32,11 +32,13 @@ def power_info(cmd_args):
     # 过滤非能耗数据
     filtered_data = []
     for item in raw_lists:
-        if "Power" in item[0]:
-            filtered_data.append(item)
+        for f in filters:
+            if f in item[0]:
+                filtered_data.append(item)
+                break
     
     msgs = []
-    name = 'power'
+    name = 'energy-consumption'
     for item in filtered_data:
         try:
             key = item[0]

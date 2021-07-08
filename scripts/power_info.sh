@@ -5,14 +5,14 @@ hostnames=( "phy-1-node-5" "phy-4-node5" "phy-7-node5" )
 
 CODE_DIR="/home/kubernetes/phystats"
 
-kafka_host="localhost"
+kafka_host="cluster-1-node-5"
 kafka_port="9092"
-kafka_topic="phystats"
-collect_interval=5.0
+kafka_topic="phypower"
+collect_interval=15.0
 daemon_action="start"
 
 cmd_args='"ipmitool" "sdr" "elist"'
-filters='"Power" "vattle"'
+filters='"Pwr" "vattle"'
 
 
 for hostname in ${hostnames[@]}

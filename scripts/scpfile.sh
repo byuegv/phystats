@@ -18,9 +18,11 @@ done
 
 CODE_DIR="/home/kubernetes/phystats"
 
-for((i=1; i<=${#hostnames[*]}; i++))
+for((i=2; i<=${#hostnames[*]}; i++))
 do
     h=${hostnames[$i]}
-    echo "${h}: ssh ${h} docker-compose -f ${CODE_DIR}/dockers/docker-compose.yml up -d"
-    ssh ${h} "docker-compose -f ${CODE_DIR}/dockers/docker-compose.yml up -d"
+    echo ""
+    echo "scp -r ${CODE_DIR} root@${h}:/home/kubernetes/"
+    echo ""
+    scp -r ${CODE_DIR} root@${h}:/home/kubernetes/
 done

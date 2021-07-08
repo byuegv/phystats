@@ -38,10 +38,10 @@ def power_info(cmd_args, filters):
                 break
     
     msgs = []
-    name = 'energy-consumption'
+    key = 'energy-consumption'
     for item in filtered_data:
         try:
-            key = item[0]
+            name = item[0]
             value = '0'
             if len(item) >= 5 and len(item[4]) > 0:
                 value = item[4].split('-')[0].strip()

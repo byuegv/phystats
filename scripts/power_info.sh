@@ -22,5 +22,5 @@ filters='"Pwr" "CPU-Usage" "MEM-Usage" "IO-Usage" "SYS-Usage" "Inlet-Temp" "Exha
         --kafka_port=${kafka_port} \
         --kafka_topic=${kafka_topic} \
         --collect_interval=${collect_interval} \
-        --cmd_args ${cmd_args} \
-        --filters ${filters}
+        --cmd_args "ipmitool" "sdr" "elist" \
+        --filters "Pwr" "CPU-Usage" "MEM-Usage" "IO-Usage" "SYS-Usage" "Inlet-Temp" "Exhaust-Temp"

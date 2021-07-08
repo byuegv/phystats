@@ -12,6 +12,7 @@ from phystats.logger import logger
 from phystats.daemonize import daemonizef
 from phystats.collector.power_info import power_info
 from phystats.repeat_timer import RepeatTimer
+from phystats.kafkah.kafka_helper import KafkaHelper
 
 
 

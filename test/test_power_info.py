@@ -7,8 +7,8 @@ from phystats.collector.power_info import power_info
 class TestPhyPowerInfo(unittest.TestCase):
     
     def test_power_info(self):
-        cmd_args = ['sudo', 'ipmitool', 'sdr', 'elist']
-        filters = ['P', 'Watte']
+        cmd_args = ['ipmitool', 'sdr', 'elist']
+        filters = ["Pwr", "CPU-Usage", "MEM-Usage", "IO-Usage", "SYS-Usage", "Inlet-Temp", "Exhaust-Temp"]
         msgs = power_info(cmd_args, filters)
         print(len(msgs))
         for msg in msgs:

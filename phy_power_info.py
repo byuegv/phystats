@@ -11,6 +11,8 @@ from kafka.errors import kafka_errors
 from phystats.logger import logger
 from phystats.daemonize import daemonizef
 from phystats.collector.power_info import power_info
+from phystats.repeat_timer import RepeatTimer
+
 
 
 parser = argparse.ArgumentParser()

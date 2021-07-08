@@ -12,12 +12,9 @@ collect_interval=15.0
 daemon_action="start"
 
 cmd_args='"ipmitool" "sdr" "elist"'
-filters='"Pwr" "vattle"'
+filters='"Pwr" "CPU-Usage" "MEM-Usage" "IO-Usage" "SYS-Usage" "Inlet-Temp" "Exhaust-Temp"'
 
 
-for hostname in ${hostnames[@]}
-do
-    echo ssh ${hostname} \
         python3 ${CODE_DIR}/phy_power_info.py \
         --daemon \
         --daemon_action=${daemon_action} \
@@ -27,4 +24,3 @@ do
         --collect_interval=${collect_interval} \
         --cmd_args ${cmd_args} \
         --filters ${filters}
-done

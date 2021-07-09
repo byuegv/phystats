@@ -79,8 +79,7 @@ vm_names = [
     "net_o",
     "net_i",
     "intr",
-    "mem_to",
-    "cpu_cores"
+    "mem_to"
 ]
 
 vm_pqls = [
@@ -105,6 +104,5 @@ vm_pqls = [
     'sum(irate(node_network_transmit_bytes_total[1m])) without (device)',
     'sum(irate(node_network_receive_bytes_total[1m])) without (device)',
     'avg_over_time(node_intr_total[1m])',
-    'sum(rate(container_memory_usage_bytes{image!=""}[1m]))',
-    'machine_cpu_cores'
+    'sum(rate(container_memory_usage_bytes{image!=""}[1m]))'
 ]

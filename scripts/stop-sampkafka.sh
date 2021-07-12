@@ -15,7 +15,7 @@ sample_ratio=0.2
 daemon_action="stop"
 
 
-        python3 ${CODE_DIR}/kafka2kafka.py \
+        python3 ${CODE_DIR}/samplekafka.py \
         --daemon \
         --daemon_action=${daemon_action} \
         --from_host=${from_host} \

@@ -9,7 +9,7 @@ kafka_host="data-center-phy"
 kafka_port="9092"
 kafka_topic="phypower"
 collect_interval=15.0
-daemon_action="start"
+daemon_action="stop"
 
 cmd_args='"ipmitool" "sdr" "elist"'
 filters='"Pwr" "CPU-Usage" "MEM-Usage" "IO-Usage" "SYS-Usage" "Inlet-Temp" "Exhaust-Temp"'

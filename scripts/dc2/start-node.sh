@@ -7,7 +7,7 @@ CODE_DIR="/home/kubernetes/phystats"
 
 host="localhost"
 port="9090"
-kafka_host="cluster-1-node-3"
+kafka_host="data-center-2"
 kafka_port="9092"
 kafka_topic="phystats"
 collect_interval=5.0

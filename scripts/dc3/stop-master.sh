@@ -7,7 +7,7 @@ CODE_DIR="/home/kubernetes/phystats"
 
 host="localhost"
 port="9090"
-kafka_host="data-center-1"
+kafka_host="data-center-3"
 kafka_port="9092"
 kafka_topic="phystats"
 collect_interval=5.0
@@ -15,7 +15,7 @@ consume_interval=5.0
 k8s_interval=5.0
 limit=100000
 role="collector"
-daemon_action="start"
+daemon_action="stop"
 
             python3 ${CODE_DIR}/main.py \
             --daemon \

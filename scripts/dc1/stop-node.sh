@@ -15,7 +15,7 @@ consume_interval=5.0
 k8s_interval=5.0
 limit=100000
 role="collector"
-daemon_action="start"
+daemon_action="stop"
 
             python3 ${CODE_DIR}/main.py \
             --daemon \
@@ -29,4 +29,4 @@ daemon_action="start"
             --consume_interval=${consume_interval} \
             --k8s_interval=${k8s_interval} \
             --limit=${limit} \
-            --role "k8s_info" ${role}
+            --role ${role}

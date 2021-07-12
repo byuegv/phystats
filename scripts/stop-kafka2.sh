@@ -11,7 +11,7 @@ from_topic="phystats"
 to_host="data-center-master"
 to_port="9092"
 to_topic="phystats"
-daemon_action="start"
+daemon_action="stop"
 
 
         python3 ${CODE_DIR}/kafka2kafka.py \

@@ -38,7 +38,7 @@ def data_save(from_server, from_topic, file_prefix, limit):
                 cur_count += 1
                 try:
                     _msg_value = str(msg.value, encoding="utf8").replace('"', '')
-                    f.write("{}\n".format(_msg_value))
+                    f.write('"{}"\n'.format(_msg_value))
                     logger.debug("{} {} {}".format(msg.topic, msg.offset, _msg_value))
                 except Exception as e:
                     logger.error("Save msg={} to file {} failed!".format(_msg_value, to_server))

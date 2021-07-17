@@ -76,16 +76,31 @@ def k8s_cluster_info():
             requests = resource.requests
             if limits:
                 if 'cpu' in limits:
-                    limit_cpu = limit_cpu + cpu_format_to_float(limits['cpu'])
+                    try:
+                        limit_cpu = limit_cpu + cpu_format_to_float(limits['cpu'])
+                    except Exception as e:
+                        limit_cpu = 0
                 if 'memory' in limits:
-                    limit_mem = limit_mem + mem_format_to_float(limits['memory'])
+                    try:
+                        limit_mem = limit_mem + mem_format_to_float(limits['memory'])
+                    except Exception as e:
+                        limit_mem = 0  
             if requests:
                 if 'cpu' in requests:
-                    request_cpu = request_cpu + cpu_format_to_float(requests['cpu'])
+                    try:
+                        request_cpu = request_cpu + cpu_format_to_float(requests['cpu'])
+                    except Exception as e:
+                        request_cpu = 0  
                 if 'memory' in requests:
-                    request_mem = request_mem + mem_format_to_float(requests['memory'])
+                    try:
+                        request_mem = request_mem + mem_format_to_float(requests['memory'])
+                    except Exception as e:
+                        request_mem = 0  
                 if 'ephemeral-storage' in requests:
-                    request_es = request_es + mem_format_to_float(requests['ephemeral-storage'])
+                    try:
+                        request_es = request_es + mem_format_to_float(requests['ephemeral-storage'])
+                    except Exception as e:
+                        request_es = 0 
 
         msgs.append(unified_msg_format("cpu_re", item.metadata.name, ip, float_to_cpu_format(request_cpu)))
         msgs.append(unified_msg_format("mem_re", item.metadata.name, ip, float_to_mem_format(request_mem)))

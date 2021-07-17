@@ -18,10 +18,13 @@ RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list &
 RUN pip install -i https://pypi.douban.com/simple/ --upgrade pip \
     && pip install -i https://pypi.douban.com/simple/ websocket-client==0.59.0 \
     && pip install -i https://pypi.douban.com/simple/ kafka==1.3.5 kafka-python==2.0.2 docker==4.1.0 docker-compose==1.25.0 \
-    && pip install -i https://pypi.douban.com/simple/ redis==3.5.3 kubernetes==17.17.0 requests==2.22.0 urllib3==1.25.8 \
-    && pip install -i https://pypi.douban.com/simple/ scikit-learn
+    && pip install -i https://pypi.douban.com/simple/ redis==3.5.3 kubernetes==17.17.0 requests==2.22.0 urllib3==1.25.8
 
 ENV PYTHONPATH=/
 ENV TERM=xterm-256color
 COPY ./ /phystats
 WORKDIR /phystats
+
+ENTRYPOINT [ "/usr/bin/python3", "main.py" ]
+
+CMD [ "--role=collector", "--kafka_host=localhost", "--kafka_port=9092" ]

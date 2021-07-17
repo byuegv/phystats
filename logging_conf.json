@@ -48,7 +48,7 @@
                 "stream" : "ext://sys.stdout"
             },
             "file_handler": {
-                "level": "DEBUG",
+                "level": "ERROR",
                 "class": "logging.handlers.WatchedFileHandler",
                 "formatter": "verbose",
                 "filename": "/tmp/file_handler.log",

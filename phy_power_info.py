@@ -23,7 +23,7 @@ parser.add_argument('--kafka_port', default="9092", type=str, help="kafka port")
 parser.add_argument('--kafka_topic', default="phystats", type=str, help="kafka topic")
 parser.add_argument('--collect_interval', default=5.0, type=float, help="metric collect interval")
 parser.add_argument('--cmd_args', default="ipmitool", type=str, nargs='+',help="sudo ipmitool sdr elist")
-parser.add_argument('--filters', default="Power", type=str, nargs='+',help="key word to filter raw data")
+parser.add_argument('--filters', default="Power", type=str, help="key word to filter raw data")
 parser.add_argument('--daemon', action='store_true', help="daemon mod")
 parser.add_argument('--daemon_action', default='start', type=str, choices=['start', 'stop'],
                     help="start/stop daemon process")
@@ -33,7 +33,8 @@ args = parser.parse_args()
 def get_phy_power_info():
     msgs = []
     try:
-        msgs = power_info(args.cmd_args, args.filters)
+        filters = args.filters.strip().split(",")
+        msgs = power_info(args.cmd_args, filters)
     except Exception as e:
         logger.warn("Get pysical power info failed! Exception: {}".format(e))
     logger.info("Number of physical power information messages: {}".format(len(msgs)))

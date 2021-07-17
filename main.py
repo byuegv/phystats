@@ -23,7 +23,7 @@ parser.add_argument('--collect_interval', default=5.0, type=float, help="metric 
 parser.add_argument('--consume_interval', default=5.0, type=float, help="kafka interval")
 parser.add_argument('--k8s_interval', default=15.0, type=float, help="k8s cluster info collect interval")
 parser.add_argument('--limit', default=100000, type=int, help="msgs to consume at once")
-parser.add_argument('--role', default=["collector"], type=str, nargs='+', choices=["collector","consumer", "k8s_info"],
+parser.add_argument('--role', default="collector", type=str,
                     help="The role of current: collector to get prometheus metrics" +
                          " k8s_info to get k8s_cluster_info" +
                          " consumer to consume msgs from kafka")
@@ -37,30 +37,39 @@ args = parser.parse_args()
 
 
 def get_k8s_cluster_info():
-    msgs = k8s_cluster_info()
-    logger.info("Number of k8s cluster information messages: {}".format(len(msgs)))
-    for msg in msgs:
-        logger.debug("k8s_info: {}".format(msg))
+    try:
+        msgs = k8s_cluster_info()
+        logger.info("Number of k8s cluster information messages: {}".format(len(msgs)))
+        for msg in msgs:
+            logger.debug("k8s_info: {}".format(msg))
 
-    kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
-    kafka_helper.send_msg_list(msgs, topic=None)
+        kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
+        kafka_helper.send_msg_list(msgs, topic=None)
+    except Exception as e:
+        logger.warn("Catch Exception when get k8s cluster info, Exception: {}".format(e))
 
 def get_metrics():
-    msgs = collect_metrics(host=args.host, port=args.port)
-    logger.info("Number of metrics messages: {}".format(len(msgs)))
-    for msg in msgs:
-        logger.debug("metrics: {}".format(msg))
-        
-    kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
-    kafka_helper.send_msg_list(msgs, topic=None)
+    try:
+        msgs = collect_metrics(host=args.host, port=args.port)
+        logger.info("Number of metrics messages: {}".format(len(msgs)))
+        for msg in msgs:
+            logger.debug("metrics: {}".format(msg))
+            
+        kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
+        kafka_helper.send_msg_list(msgs, topic=None)
+    except Exception as e:
+        logger.warn("Catch Exception when get metrics, Exception: {}".format(e))
 
 def consume_msgs():
-    kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
-    limit = None
-    if args.limit:
-        limit = args.limit
-    msgs = kafka_helper.consume_data(topic=None, boot_server=None, limit=limit)
-    logger.info("Number of consumed messages: {}".format(len(msgs)))
+    try:
+        kafka_helper = KafkaHelper(topic=args.kafka_topic, host=args.kafka_host, port=args.kafka_port)
+        limit = None
+        if args.limit:
+            limit = args.limit
+        msgs = kafka_helper.consume_data(topic=None, boot_server=None, limit=limit)
+        logger.info("Number of consumed messages: {}".format(len(msgs)))
+    except Exception as e:
+        logger.warn("Catch Exception when consume_msgs, Exception: {}".format(e))
 
 
 if __name__ == '__main__':
@@ -73,6 +82,8 @@ if __name__ == '__main__':
     # sys.exit(0)
     PIDFILE = '/tmp/phystats_daemon.pid'
 
+    role = args.role.strip().split(",")
+
     if args.daemon:
         if args.daemon_action == 'start':
             try:
@@ -84,14 +95,14 @@ if __name__ == '__main__':
                 raise SystemExit(1)
             # 守护进程中运行的主程序
             timers = []
-            if "collector" in args.role:
+            if "collector" in role:
                 collect_timer = RepeatTimer(args.collect_interval, get_metrics)
                 timers.append(collect_timer)
 
-            if "consumer" in args.role:
+            if "consumer" in role:
                 consume_msgs()
 
-            if "k8s_info" in args.role:
+            if "k8s_info" in role:
                 k8s_timer = RepeatTimer(args.k8s_interval, get_k8s_cluster_info)
                 timers.append(k8s_timer)
 
@@ -109,12 +120,12 @@ if __name__ == '__main__':
             raise SystemExit(1)
     else:
         timers = []
-        if "collector" in args.role:
+        if "collector" in role:
             collect_timer = RepeatTimer(args.collect_interval, get_metrics)
             timers.append(collect_timer)
-        if "consumer" in args.role:
+        if "consumer" in role:
             consume_msgs()
-        if "k8s_info" in args.role:
+        if "k8s_info" in role:
             k8s_timer = RepeatTimer(args.k8s_interval, get_k8s_cluster_info)
             timers.append(k8s_timer)
         for t in timers:

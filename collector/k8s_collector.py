@@ -1,14 +1,17 @@
 # -*- coding:utf-8 -*-
 
 import time
+import re
 from phystats.utils import local_ip_address, get_millisecond
 from phystats.logger import logger
 from kubernetes import client, config
 
 
 def cpu_format_to_float(cpu_data):
-    cpu_string = cpu_data[:-1]
-    return float(cpu_string)
+    if cpu_data[-1] in ['m']:
+        return float(re.findall(r"\d+\.?\d*", cpu_data)[0]) / 1000
+    else:
+        return float(re.findall(r"\d+\.?\d*", cpu_data)[0])
 
 
 def float_to_cpu_format(float_data):
@@ -16,8 +19,14 @@ def float_to_cpu_format(float_data):
 
 
 def mem_format_to_float(mem_data):
-    mem_string = mem_data[:-2]
-    return float(mem_string)
+    if mem_data[-1] in ['g', 'G']:
+        return float(re.findall(r"\d+\.?\d*", mem_data)[0]) * 1000
+    elif mem_data[-1] in ['m', 'M'] or mem_data[-2:] in ["Mi", "mi"] :
+        return float(re.findall(r"\d+\.?\d*", mem_data)[0])
+    elif mem_data[-1] in ['k', 'K']:
+        return float(re.findall(r"\d+\.?\d*", mem_data)[0]) / 1000
+    else:
+        return float(re.findall(r"\d+\.?\d*", mem_data)[0]) / 1000000
 
 
 def float_to_mem_format(float_data):

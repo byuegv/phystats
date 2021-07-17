@@ -15,7 +15,7 @@ def cpu_format_to_float(cpu_data):
 
 
 def float_to_cpu_format(float_data):
-    return str(float_data) + "m"
+    return str(float_data)
 
 
 def mem_format_to_float(mem_data):
@@ -30,7 +30,7 @@ def mem_format_to_float(mem_data):
 
 
 def float_to_mem_format(float_data):
-    return str(float_data) + "Mi"
+    return str(float_data)
 
 
 def unified_msg_format(key, name, ip, value):

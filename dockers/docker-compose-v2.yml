@@ -47,3 +47,21 @@ services:
       - /proc:/host/proc
       - /sys:/host/sys
       - /:/rootfs
+  phystats:
+    image: byuegv/phystats:latest
+    container_name: phystats
+    network_mode: host
+    entrypoint: ["/usr/bin/python3", "main.py"]
+    command:
+      - '--host=localhost'
+      - '--port=9090'
+      - '--kafka_host=kafka-server'
+      - '--kafka_port=9092'
+      - '--kafka_topic=phystats'
+      - '--collect_interval=15.0'
+      - '--consume_interval=15.0'
+      - '--k8s_interval=15.0'
+      - '--limit=10000'
+      - '--role=collector,k8s_info'
+    depends_on:
+      - prometheus

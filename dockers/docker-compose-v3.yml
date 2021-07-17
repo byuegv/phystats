@@ -18,4 +18,4 @@ services:
       - '--role=collector,k8s_info'
     volumes:
       - /root/.kube:/root/.kube
-restart: always
+    restart: always

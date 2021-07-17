@@ -12,6 +12,7 @@ services:
       - /home/kubernetes/phystats/dockers/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
       - node_exporter
+    restart: always
 
   cadvisor:
     image: google/cadvisor:latest
@@ -25,12 +26,14 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     depends_on:
       - redis
+    restart: always
 
   redis:
     image: redis:latest
     container_name: redis
     ports:
       - 6379:6379
+    restart: always
 
   node_exporter:
     image: prom/node-exporter:latest
@@ -47,4 +50,4 @@ services:
       - /proc:/host/proc
       - /sys:/host/sys
       - /:/rootfs
-restart: always
+    restart: always

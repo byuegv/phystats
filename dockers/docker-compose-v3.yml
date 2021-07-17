@@ -16,3 +16,6 @@ services:
       - '--k8s_interval=15.0'
       - '--limit=10000'
       - '--role=collector,k8s_info'
+    volumes:
+      - /root/.kube:/root/.kube
+restart: always

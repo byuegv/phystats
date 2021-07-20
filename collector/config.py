@@ -58,7 +58,7 @@ pod_pqls = [
 ]
 
 vm_names = [
-    "cpu_us"
+    "cpu_us",
     "cpu_id",
     "cpu_io",
     "cpu_ir",

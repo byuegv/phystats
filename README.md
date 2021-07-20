@@ -175,3 +175,19 @@ python3 main.py --role="consumer" --kafka_host="localhost" --kafka_port="9092" -
 ``` Bash
 python3 kafka2kafka --from_host="localhost" --from_port="9092" --from_topic="phystats" --to_host="localhost" --to_port="9092" --to_topic="phystats"
 ```
+
+```
+jps
+
+docker image ls
+docker container ls
+
+docker save -o xxx.tar image_name
+docker load -i xxx.tar
+
+docker-compose -f docker-compose.yml up [-d]
+docker-compose -f docker-compose.yml down
+
+docker-compose -f docker-compose.yml ps
+
+```

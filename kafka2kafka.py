@@ -31,7 +31,7 @@ args = parser.parse_args()
 def kafka_to_kafka(from_server, from_topic, to_server, to_topic):
     consumer = KafkaConsumer(from_topic, bootstrap_servers=from_server)
     
-    producer = KafkaProducer(bootstrap_servers=[to_server], 
+    producer =KafkaProducer(bootstrap_servers=[to_server], 
                                         key_serializer=lambda k: json.dumps(k).encode('utf8'),
                                         value_serializer=lambda v: json.dumps(v).encode('utf8'))
         

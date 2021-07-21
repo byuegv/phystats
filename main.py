@@ -31,6 +31,10 @@ parser.add_argument('--daemon', action='store_true', help="daemon mod")
 parser.add_argument('--daemon_action', default='start', type=str, choices=['start', 'stop'],
                     help="start/stop daemon process")
 
+parser.add_argument('--bootstrap_servers', default='localhost:9092', type=str,
+                    help="list of kafka servers: host[:port]")
+parser.add_argument('--topic', default="phystats", type=str, help="kafka topic")
+
 
 args = parser.parse_args()
 

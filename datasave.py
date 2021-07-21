@@ -15,8 +15,8 @@ from phystats.daemonize import daemonizef
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--from_host', default="localhost", type=str, help="host of source kafka")
-parser.add_argument('--from_port', default="9092", type=str, help="port of source kafka")
+parser.add_argument('--from_bootstrap_servers', default='localhost:9092', type=str,
+                    help="kafka source, list of kafka servers: host[:port]")
 parser.add_argument('--from_topic', default="phystats", type=str, help="topic of source kafka")
 parser.add_argument('--file_prefix', default="vm-con-data", type=str, help="prefix of file name")
 parser.add_argument('--limit', default=1000000, type=int, help="msgs of each file")
@@ -27,9 +27,9 @@ parser.add_argument('--daemon_action', default='start', type=str, choices=['star
 args = parser.parse_args()
 
 
-def data_save(from_server, from_topic, file_prefix, limit):
-    consumer = KafkaConsumer(from_topic, bootstrap_servers=from_server)    
-    logger.info("Start consume data from server={}, topic={}".format(from_server, from_topic))
+def data_save(from_servers, from_topic, file_prefix, limit):
+    consumer = KafkaConsumer(from_topic, bootstrap_servers=from_servers)    
+    logger.info("Start consume data from server={}, topic={}".format(from_servers, from_topic))
     cur_count = 1
     while True:
         file_name = "{}-{}.txt".format(file_prefix, cur_count-1)
@@ -41,7 +41,7 @@ def data_save(from_server, from_topic, file_prefix, limit):
                     f.write('"{}"\n'.format(_msg_value))
                     logger.debug("{} {} {}".format(msg.topic, msg.offset, _msg_value))
                 except Exception as e:
-                    logger.error("Save msg={} to file {} failed!".format(_msg_value, to_server))
+                    logger.error("Save msg={} to file {} failed! Exception: {}".format(_msg_value, file_name, e))
                 if cur_count % limit == 0:
                     break
 
@@ -52,7 +52,7 @@ if __name__ == '__main__':
         logger.info('{}: {}'.format(k, vars(args)[k]))
     # import sys
     # sys.exit(0)
-    from_server = "{}:{}".format(args.from_host, args.from_port)
+    from_server = args.from_bootstrap_servers.strip().split(",")
     from_topic = args.from_topic
 
     file_prefix = args.file_prefix
@@ -69,7 +69,7 @@ if __name__ == '__main__':
                 print(e, file=sys.stderr)
                 raise SystemExit(1)
             # 守护进程中运行的主程序
-            data_save(from_server, from_topic, file_prefix, limit)
+            data_save(from_servers, from_topic, file_prefix, limit)
 
         elif args.daemon_action == 'stop':
             if os.path.exists(PIDFILE):
@@ -82,6 +82,6 @@ if __name__ == '__main__':
             print('Unknown command {!r}'.format(sys.argv[1]), file=sys.stderr)
             raise SystemExit(1)
     else:
-        data_save(from_server, from_topic, file_prefix, limit)
+        data_save(from_servers, from_topic, file_prefix, limit)
 
 

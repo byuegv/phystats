@@ -5,12 +5,9 @@ ENV TZ=Asia/Shanghai
 # set location
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-#RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list && apt-get update --fix-missing \
 RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list && apt-get update \
 # RUN apt-get update \
     # Install packages
-    # && apt-get install -y dialog apt-utils iproute2 net-tools curl wget vim openssh-server git make cmake \
-    # && apt-get install -y python3 python3-pip libbz2-dev python3-tk tk-dev \
     && apt-get install -y curl wget \
     && apt-get install -y python3 python3-pip \
     # Clean up

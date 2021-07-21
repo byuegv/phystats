@@ -38,15 +38,16 @@ def power_info(cmd_args, filters):
                 break
     
     msgs = []
-    key = 'energy-consumption'
+    obj_name = 'ma'
+    uuid = os.getenv("CLUSTER_ID", "cluster-1")
     for item in filtered_data:
         try:
-            name = item[0]
+            metric = item[0]
             value = '0'
             if len(item) >= 5 and len(item[4]) > 0:
                 value = item[4].split('-')[0].strip()
-                value = float(value)
-            msg = unified_message_format(name,key, value)
+            value = float(value)
+            msg = unified_message_format(metric, obj_name, uuid, value)
             msgs.append(msg)
         except Exception as e:
             logger.debug("Convert data failed: Exception: {}".format(e))

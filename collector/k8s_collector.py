@@ -44,6 +44,27 @@ def unified_msg_format(key, name, ip, value):
     millisecond = get_millisecond()
     return "{}:{}:{}:{}:{}|{}".format(key, name, ip, millisecond, value, millisecond)
 
+def unified_msg_format(metric, obj_name, uuid, ip, value):
+    """
+    统一的message输出格式
+    @name: 
+    @key:
+    @value:
+    """
+    # ip = local_ip_address()
+    # 物理机
+    if obj_name == 'ma':
+        tmp = uuid
+        uuid = ip
+        ip = tmp
+    # 虚拟机
+    elif obj_name == 'vm':
+        uuid = ip[:-1] + '0'
+        
+    timestamp = get_millisecond()
+    value = format_float(value)
+    return "{}:{}:{}:{}:{}:{}|{}".format(metric.rstrip("\n"), obj_name, uuid, ip, timestamp, value, timestamp)
+
 def k8s_cluster_info():
     """
     获取k8s集群信息
@@ -60,6 +81,9 @@ def k8s_cluster_info():
 
     labels = ["cluster_name"]
     resource_name = ["cpu", "memory"]
+
+    obj_name = 'pd'
+
     msgs = []
     for item in ret.items:
         limit_cpu = 0
@@ -74,11 +98,6 @@ def k8s_cluster_info():
         else:
             ip = local_ip_address()
 
-        if item.metadata.cluster_name:
-            msgs.append(unified_msg_format("clu_na", item.metadata.name, ip, item.metadata.cluster_name))
-        else:
-            msgs.append(unified_msg_format("clu_na", item.metadata.name, ip, "None"))
-
         for c in item.spec.containers:
             resource = c.resources
             limits = resource.limits
@@ -88,32 +107,33 @@ def k8s_cluster_info():
                     try:
                         limit_cpu = limit_cpu + cpu_format_to_float(limits['cpu'])
                     except Exception as e:
-                        limit_cpu = 0
+                        limit_cpu = 1000
                 if 'memory' in limits:
                     try:
                         limit_mem = limit_mem + mem_format_to_float(limits['memory'])
                     except Exception as e:
-                        limit_mem = 0  
+                        limit_mem = 1024  
             if requests:
                 if 'cpu' in requests:
                     try:
                         request_cpu = request_cpu + cpu_format_to_float(requests['cpu'])
                     except Exception as e:
-                        request_cpu = 0  
+                        request_cpu = 1000  
                 if 'memory' in requests:
                     try:
                         request_mem = request_mem + mem_format_to_float(requests['memory'])
                     except Exception as e:
-                        request_mem = 0  
+                        request_mem = 1024 
                 if 'ephemeral-storage' in requests:
                     try:
                         request_es = request_es + mem_format_to_float(requests['ephemeral-storage'])
                     except Exception as e:
                         request_es = 0 
 
-        msgs.append(unified_msg_format("cpu_re", item.metadata.name, ip, float_to_cpu_format(request_cpu)))
-        msgs.append(unified_msg_format("mem_re", item.metadata.name, ip, float_to_mem_format(request_mem)))
-        msgs.append(unified_msg_format("cpu_li", item.metadata.name, ip, float_to_cpu_format(limit_cpu)))
-        msgs.append(unified_msg_format("mem_li", item.metadata.name, ip, float_to_mem_format(limit_mem)))
-        msgs.append(unified_msg_format("es_re", item.metadata.name, ip, float_to_mem_format(request_es)))
+        uuid = item.uid + '-' + item.metadata.name
+        msgs.append(unified_msg_format("cpu_re", obj_name, uuid, ip, float_to_cpu_format(request_cpu)))
+        msgs.append(unified_msg_format("mem_re", obj_name, uuid, ip, float_to_mem_format(request_mem)))
+        msgs.append(unified_msg_format("cpu_li", obj_name, uuid, ip, float_to_cpu_format(limit_cpu)))
+        msgs.append(unified_msg_format("mem_li", obj_name, uuid, ip, float_to_mem_format(limit_mem)))
+        msgs.append(unified_msg_format("es_re", obj_name, uuid, ip, float_to_mem_format(request_es)))
     return msgs

@@ -15,13 +15,17 @@ def collect_container(host='localhost', port=9090):
     names = config.container_names
     pqls = config.container_pqls
     logger.info("Collect container metrics ...")
+
+    obj_name = "container"
+
     for pql, name in zip(pqls, names):
         response = query_prometheus_data(pql, host=host, port=port)
         if response:
             for data in response['data']['result']:
-                key = data['metric']['name']
+                metric = name
                 value = data['value'][1]
-                msg = unified_message_format(name=name, key=key, value=value)
+                uuid = data['metric']['name']
+                msg = unified_message_format(metric, obj_name, uuid, value)
                 msgs.append(msg)
     return msgs
 
@@ -33,13 +37,17 @@ def collect_dif_format(host='localhost', port=9090):
     names = config.dif_format_names
     pqls = config.dif_format_pqls
     logger.info("Collect container dif format metrics ...")
+
+    obj_name = "container"
+
     for pql, name in zip(pqls, names):
         response = query_prometheus_data(pql, host=host, port=port)
         if response:
             for data in response['data']['result']:
-                key = "ct"
+                metric = name
+                uuid = pql
                 value = data['value'][1]
-                msg = unified_message_format(name=name, key=key, value=value)
+                msg = unified_message_format(metric, obj_name, uuid, value)
                 msgs.append(msg)
     return msgs
 
@@ -52,13 +60,17 @@ def collect_pdu(host='localhost', port=9090):
     names = config.pdu_names
     pqls = config.pdu_pqls
     logger.info("Collect pdu metrics ...")
+
+    obj_name = "vm"
+
     for pql, name in zip(pqls, names):
         response = query_prometheus_data(pql, host=host, port=port)
         if response:
             for data in response['data']['result']:
-                key = data['metric']['pdu_id']
+                metric = name
+                uuid = data['metric']['pdu_id']
                 value = data['value'][1]
-                msg = unified_message_format(name=name, key=key, value=value)
+                msg = unified_message_format(metric, obj_name, uuid, value)
                 msgs.append(msg)
     return msgs
 
@@ -70,13 +82,16 @@ def collect_pod(host='localhost', port=9090):
     names = config.pod_names
     pqls = config.pod_pqls
     logger.info("Collect pod metrics ...")
+    obj_name = "pd"
+
     for pql, name in zip(pqls, names):
         response = query_prometheus_data(pql, host=host, port=port)
         if response:
             for data in response['data']['result']:
-                key = data['metric']['container_label_io_kubernetes_pod_name'] 
+                metric = name
+                uuid = data['metric']['container_label_io_kubernetes_pod_name'] 
                 value = data['value'][1]
-                msg = unified_message_format(name=name, key=key, value=value)
+                msg = unified_message_format(metric, obj_name, uuid, value)
                 msgs.append(msg)
     return msgs
 
@@ -88,13 +103,15 @@ def collect_vm(host='localhost', port=9090):
     names = config.vm_names
     pqls = config.vm_pqls
     logger.info("Collect vm metrics ...")
+    obj_name = "vm"
     for pql, name in zip(pqls, names):
         response = query_prometheus_data(pql, host=host, port=port)
         if response:
             for data in response['data']['result']:
-                key = "vm"
+                metric = name
                 value = data['value'][1]
-                msg = unified_message_format(name=name, key=key, value=value)
+                uuid = pql
+                msg = unified_message_format(metric, obj_name, uuid, value)
                 msgs.append(msg)
     return msgs
 

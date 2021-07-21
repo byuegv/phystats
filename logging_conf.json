@@ -42,7 +42,7 @@
         },
         "handlers": {
             "console":{
-                "level": "DEBUG",
+                "level": "ERROR",
                 "class": "logging.StreamHandler",
                 "formatter": "single-line",
                 "stream" : "ext://sys.stdout"
@@ -68,7 +68,7 @@
         "loggers": { },
         "root": {
             "handlers": ["console", "file_handler"],
-            "level": "DEBUG"
+            "level": "ERROR"
         }
     }
 }

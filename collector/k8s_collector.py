@@ -32,18 +32,6 @@ def mem_format_to_float(mem_data):
 def float_to_mem_format(float_data):
     return str(float_data)
 
-
-def unified_msg_format(key, name, ip, value):
-    """
-    统一的message输出格式
-    @ip:
-    @name: 
-    @key:
-    @value:
-    """
-    millisecond = get_millisecond()
-    return "{}:{}:{}:{}:{}|{}".format(key, name, ip, millisecond, value, millisecond)
-
 def unified_msg_format(metric, obj_name, uuid, ip, value):
     """
     统一的message输出格式
@@ -62,7 +50,6 @@ def unified_msg_format(metric, obj_name, uuid, ip, value):
         uuid = ip[:-1] + '0'
         
     timestamp = get_millisecond()
-    value = format_float(value)
     return "{}:{}:{}:{}:{}:{}|{}".format(metric.rstrip("\n"), obj_name, uuid, ip, timestamp, value, timestamp)
 
 def k8s_cluster_info():
@@ -129,8 +116,11 @@ def k8s_cluster_info():
                         request_es = request_es + mem_format_to_float(requests['ephemeral-storage'])
                     except Exception as e:
                         request_es = 0 
-
-        uuid = item.uid + '-' + item.metadata.name
+        uuid = 'uuid'
+        try:
+            uuid = item.uid + '-' + item.metadata.name
+        except Exception as e:
+            uuid = item.metadata.name
         msgs.append(unified_msg_format("cpu_re", obj_name, uuid, ip, float_to_cpu_format(request_cpu)))
         msgs.append(unified_msg_format("mem_re", obj_name, uuid, ip, float_to_mem_format(request_mem)))
         msgs.append(unified_msg_format("cpu_li", obj_name, uuid, ip, float_to_cpu_format(limit_cpu)))

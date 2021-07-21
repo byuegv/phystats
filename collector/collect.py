@@ -16,7 +16,7 @@ def collect_container(host='localhost', port=9090):
     pqls = config.container_pqls
     logger.info("Collect container metrics ...")
 
-    obj_name = "container"
+    obj_name = "ctr"
 
     for pql, name in zip(pqls, names):
         response = query_prometheus_data(pql, host=host, port=port)
@@ -38,7 +38,7 @@ def collect_dif_format(host='localhost', port=9090):
     pqls = config.dif_format_pqls
     logger.info("Collect container dif format metrics ...")
 
-    obj_name = "container"
+    obj_name = "ctr"
 
     for pql, name in zip(pqls, names):
         response = query_prometheus_data(pql, host=host, port=port)

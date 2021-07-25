@@ -106,3 +106,24 @@ vm_pqls = [
     'avg_over_time(node_intr_total[1m])',
     'sum(rate(container_memory_usage_bytes{image!=""}[1m]))'
 ]
+
+
+ma_names = [
+    "CPU-Usage",
+    "SYS-Usage",
+    "MEM-Usage",
+    "IO-Usage",
+    "Inlet-Temp",
+    "Exhaust-Temp",
+    "Pwr-Consumption"
+]
+
+ma_pqls = [
+    '1-(sum(rate(node_cpu_seconds_total{cpu!="",mode="idle"}[1m])) without (cpu))',
+    'sum(rate(node_cpu_seconds_total{cpu!="",mode="system"}[1m])) without (cpu)',
+    '1-(node_memory_MemFree_bytes/ node_memory_MemTotal_bytes)',
+    'irate(node_disk_io_time_seconds_total [5m])'
+    'ipmi_temperatures{sensor=~".*CPU.*"}',
+    'ipmi_temperatures{sensor!~".*CPU.*"}',
+    'ipmi_power_supply_status'
+]

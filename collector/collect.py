@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+import os
 import time
 from phystats.collector.util import unified_message_format
 from phystats.collector import config
@@ -104,13 +105,14 @@ def collect_vm(host='localhost', port=9090):
     pqls = config.vm_pqls
     logger.info("Collect vm metrics ...")
     obj_name = "vm"
+    uuid = os.getenv("MACHINE_ADDRESS", "")
     for pql, name in zip(pqls, names):
         response = query_prometheus_data(pql, host=host, port=port)
         if response:
             for data in response['data']['result']:
                 metric = name
                 value = data['value'][1]
-                uuid = pql
+                # uuid = pql
                 msg = unified_message_format(metric, obj_name, uuid, value)
                 msgs.append(msg)
     return msgs

@@ -23,7 +23,8 @@ def unified_message_format(metric, obj_name, uuid, value):
         ip = tmp
     # 虚拟机
     elif obj_name == 'vm':
-        uuid = ip[:-1] + '0'
+        if uuid == "":
+            uuid = ip[:-1] + '0'
         
     timestamp = get_millisecond()
     value = format_float(value)

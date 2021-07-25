@@ -1,0 +1,68 @@
+version: '3.2'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    network_mode: host
+    ports:
+      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - /home/kubernetes/phystats/dockers/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - node_exporter
+      - ipmi_exporter
+    restart: always
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    network_mode: host
+    ports:
+      - 9100:9100
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--collector.textfile.directory=/node_exporter/prom'
+    volumes:
+      - /proc:/host/proc
+      - /sys:/host/sys
+      - /:/rootfs
+    restart: always
+
+  ipmi_exporter:
+    image: lovoo/ipmi_exporter:latest
+    container_name: ipmi_exporter
+    network_mode: host
+    ports:
+        - 9289:9289
+    devices:
+      - '/dev/ipmi0'
+    restart: always
+
+  phystats:
+    image: byuegv/phystats:latest
+    container_name: phystats
+    network_mode: host
+    entrypoint: ["/usr/bin/python3", "cmachine.py"]
+    environment:
+        - CLUSTER_ID=cluster-1
+        - MACHINE_ADDRESS="127.0.0.1"
+    command:
+        - '--host=localhost'
+        - '--port=9090'
+        - '--kafka_host=kafka-server'
+        - '--kafka_port=9092'
+        - '--kafka_topic=phystats'
+        - '--collect_interval=15.0'
+        - '--consume_interval=15.0'
+        - '--k8s_interval=15.0'
+        - '--limit=10000'
+        - '--role=collector,k8s_info'
+    volumes:
+        - /root/.kube:/root/.kube
+    depends_on:
+        - prometheus
+    restart: always

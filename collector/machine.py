@@ -15,13 +15,13 @@ def collect_ma(host='localhost', port=9090):
     pqls = config.ma_pqls
     logger.info("Collect ma metrics ...")
     obj_name = "ma"
+    uuid = os.getenv("CLUSTER_ID", "cluster-1")
     for pql, name in zip(pqls, names):
         response = query_prometheus_data(pql, host=host, port=port)
         if response:
             for data in response['data']['result']:
                 metric = name
                 value = data['value'][1]
-                uuid = pql
                 msg = unified_message_format(metric, obj_name, uuid, value)
                 msgs.append(msg)
     return msgs
@@ -35,7 +35,7 @@ def collect_metrics(host='localhost', port=9090):
 
     try:
         ma_msgs = collect_ma(host, port)
-        msgs.extend(container_msgs)
+        msgs.extend(ma_msgs)
     except Exception as e:
         logger.info("Encounter exception when collecting metrics, Exception: {}".format(e))
 

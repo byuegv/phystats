@@ -123,7 +123,7 @@ ma_pqls = [
     'sum(rate(node_cpu_seconds_total{cpu!="",mode="system"}[1m])) without (cpu)',
     '1-(node_memory_MemFree_bytes/ node_memory_MemTotal_bytes)',
     'irate(node_disk_io_time_seconds_total [5m])',
-    'ipmi_temperatures{sensor=~".*CPU.*"}',
-    'ipmi_temperatures{sensor!~".*CPU.*"}',
+    'ipmi_temperatures{sensor=~".*CPU.*|.*Inlet.*"}',
+    'ipmi_temperatures{sensor!~".*CPU.*|.*Inlet.*"}',
     'ipmi_power_supply_status'
 ]

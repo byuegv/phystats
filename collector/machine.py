@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+import os
 import time
 from phystats.collector.util import unified_message_format
 from phystats.collector import config

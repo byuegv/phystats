@@ -63,13 +63,14 @@ def collect_pdu(host='localhost', port=9090):
     logger.info("Collect pdu metrics ...")
 
     obj_name = "vm"
+    uuid = os.getenv("MACHINE_ADDRESS", "")
 
     for pql, name in zip(pqls, names):
         response = query_prometheus_data(pql, host=host, port=port)
         if response:
             for data in response['data']['result']:
                 metric = name
-                uuid = data['metric']['pdu_id']
+                #uuid = data['metric']['pdu_id']
                 value = data['value'][1]
                 msg = unified_message_format(metric, obj_name, uuid, value)
                 msgs.append(msg)

@@ -54,6 +54,9 @@ services:
   phystats:
     image: byuegv/phystats:latest
     container_name: phystats
+    environment:
+      - CLUSTER_ID=cluster-1
+      - MACHINE_ADDRESS="127.0.0.1"
     network_mode: host
     entrypoint: ["/usr/bin/python3", "main.py"]
     command:
